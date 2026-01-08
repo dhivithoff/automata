@@ -6,6 +6,7 @@ import { useState } from "react";
 
 const ContactSection = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   return (
     <section id="contact" className="section-padding bg-background">
@@ -86,20 +87,26 @@ const ContactSection = () => {
               </div>
             ) : (
               <form
-                action="https://formsubmit.co/org.automata@gmail.com"
-                method="POST"
-                onSubmit={() => setSubmitted(true)}
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setLoading(true);
+
+                  const formData = new FormData(e.target);
+
+                  await fetch("https://formsubmit.co/ajax/org.automata@gmail.com", {
+                    method: "POST",
+                    body: formData,
+                  });
+
+                  setLoading(false);
+                  setSubmitted(true);
+                }}
                 className="space-y-5"
               >
-                {/* FormSubmit settings */}
+                {/* FormSubmit config */}
                 <input type="hidden" name="_captcha" value="false" />
                 <input type="hidden" name="_template" value="table" />
                 <input type="hidden" name="_subject" value="New Lead from Automata Website" />
-                <input
-                  type="hidden"
-                  name="_next"
-                  value="https://automata-rose.vercel.app/#contact"
-                />
 
                 <div>
                   <label className="block text-sm font-medium mb-2">
@@ -127,12 +134,9 @@ const ContactSection = () => {
                   />
                 </div>
 
-                {/* IMPORTANT: real submit button */}
-                <Button variant="hero" size="lg" className="w-full" asChild>
-                  <button type="submit">
-                    Send Message
-                    <Send className="ml-2" size={18} />
-                  </button>
+                <Button type="submit" variant="hero" size="lg" className="w-full" disabled={loading}>
+                  {loading ? "Sending..." : "Send Message"}
+                  <Send className="ml-2" size={18} />
                 </Button>
               </form>
             )}
