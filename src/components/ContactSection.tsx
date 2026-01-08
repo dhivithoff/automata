@@ -1,41 +1,10 @@
 import { MessageCircle, Mail, Send, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 
 const ContactSection = () => {
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const formData = new FormData(e.target);
-
-      const response = await fetch("https://formsubmit.co/ajax/org.automata@gmail.com", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-        },
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data.success === "true") {
-        setSubmitted(true);
-      } else {
-        alert("Message could not be sent. Try again.");
-      }
-    } catch (error) {
-      alert("Network error. Please try again.");
-    }
-
-    setLoading(false);
-  };
 
   return (
     <section id="contact" className="section-padding bg-background">
@@ -104,9 +73,7 @@ const ContactSection = () => {
 
             {submitted ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="w-16 h-16 rounded-full bg-success/20 flex items-center justify-center mb-4">
-                  <CheckCircle className="w-8 h-8 text-success" />
-                </div>
+                <CheckCircle className="w-12 h-12 text-success mb-4" />
                 <h4 className="text-xl font-semibold text-foreground mb-2">
                   Message Sent!
                 </h4>
@@ -115,42 +82,45 @@ const ContactSection = () => {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                {/* FormSubmit config */}
+              <form
+                action="https://formsubmit.co/org.automata@gmail.com"
+                method="POST"
+                onSubmit={() => setSubmitted(true)}
+                className="space-y-5"
+              >
                 <input type="hidden" name="_captcha" value="false" />
                 <input type="hidden" name="_template" value="table" />
                 <input type="hidden" name="_subject" value="New Lead from Automata Website" />
+                <input type="hidden" name="_next" value="https://automata-rose.vercel.app/#contact" />
 
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Your Name
                   </label>
-                  <Input name="name" required placeholder="John Doe" />
+                  <Input name="name" required />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Email Address
                   </label>
-                  <Input name="email" type="email" required placeholder="john@example.com" />
+                  <Input name="email" type="email" required />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Your Message
                   </label>
-                  <Textarea
-                    name="message"
-                    rows={4}
-                    required
-                    placeholder="Tell us about your automation needs..."
-                  />
+                  <Textarea name="message" rows={4} required />
                 </div>
 
-                <Button type="submit" variant="hero" size="lg" className="w-full" disabled={loading}>
-                  {loading ? "Sending..." : "Send Message"}
-                  <Send className="ml-2" size={18} />
-                </Button>
+                <button
+                  type="submit"
+                  className="w-full bg-primary text-white py-3 rounded-xl flex items-center justify-center gap-2"
+                >
+                  Send Message
+                  <Send size={18} />
+                </button>
               </form>
             )}
           </div>
