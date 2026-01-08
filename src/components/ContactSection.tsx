@@ -127,9 +127,12 @@ const ContactSection = () => {
                   />
                 </div>
 
-                <Button type="submit" variant="hero" size="lg" className="w-full">
-                  Send Message
-                  <Send className="ml-2" size={18} />
+                {/* IMPORTANT: real submit button */}
+                <Button variant="hero" size="lg" className="w-full" asChild>
+                  <button type="submit">
+                    Send Message
+                    <Send className="ml-2" size={18} />
+                  </button>
                 </Button>
               </form>
             )}
