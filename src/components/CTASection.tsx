@@ -47,12 +47,12 @@ const CTASection = () => {
               className="bg-primary-foreground/10 text-primary-foreground border-2 border-primary-foreground/20 hover:bg-primary-foreground/20"
               asChild
             >
-              <a
+              {/* <a
                 href="mailto:org.automata@gmail.com?subject=Automata%20Automation%20Request&body=Hi%20Automata%2C%0A%0AI%20want%20to%20automate%20my%20business.%20Please%20contact%20me.%0A%0AThanks"
               >
                 <Mail size={20} />
                 Email Us
-              </a>
+              </a> */}
             </Button>
           </div>
         </div>
