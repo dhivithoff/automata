@@ -1,13 +1,21 @@
-const { Resend } = require("resend");
+import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+export const config = {
+  runtime: "nodejs",
+};
 
-module.exports = async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
+export default async function handler(req, res) {
   try {
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    if (!process.env.RESEND_API_KEY) {
+      return res.status(500).json({ error: "Missing RESEND_API_KEY" });
+    }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     const { name, email, message } = req.body;
 
     if (!name || !email || !message) {
@@ -19,7 +27,7 @@ module.exports = async function handler(req, res) {
       to: ["org.automata@gmail.com"],
       subject: "🚀 New Lead from Automata Website",
       html: `
-        <h2>New Contact Form Submission</h2>
+        <h2>New Contact Form</h2>
         <p><b>Name:</b> ${name}</p>
         <p><b>Email:</b> ${email}</p>
         <p><b>Message:</b></p>
@@ -29,7 +37,7 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json({ success: true });
   } catch (error) {
-    console.error("EMAIL ERROR:", error);
-    return res.status(500).json({ error: "Email failed" });
+    console.error("API ERROR:", error);
+    return res.status(500).json({ error: error.message });
   }
-};
+}
