@@ -6,40 +6,6 @@ import { useState } from "react";
 
 const ContactSection = () => {
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    const formData = new FormData(e.target);
-
-    const payload = {
-      name: formData.get("name"),
-      email: formData.get("email"),
-      message: formData.get("message"),
-    };
-
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (res.ok) {
-        setSubmitted(true);
-      } else {
-        alert("Failed to send message. Please try again.");
-      }
-    } catch (err) {
-      alert("Network error. Please try again.");
-    }
-
-    setLoading(false);
-  };
 
   return (
     <section id="contact" className="section-padding bg-background">
@@ -119,7 +85,22 @@ const ContactSection = () => {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form
+                action="https://formsubmit.co/org.automata@gmail.com"
+                method="POST"
+                onSubmit={() => setSubmitted(true)}
+                className="space-y-5"
+              >
+                {/* FormSubmit settings */}
+                <input type="hidden" name="_captcha" value="false" />
+                <input type="hidden" name="_template" value="table" />
+                <input type="hidden" name="_subject" value="New Lead from Automata Website" />
+                <input
+                  type="hidden"
+                  name="_next"
+                  value="https://automata-rose.vercel.app/#contact"
+                />
+
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Your Name
@@ -146,8 +127,8 @@ const ContactSection = () => {
                   />
                 </div>
 
-                <Button type="submit" variant="hero" size="lg" className="w-full" disabled={loading}>
-                  {loading ? "Sending..." : "Send Message"}
+                <Button type="submit" variant="hero" size="lg" className="w-full">
+                  Send Message
                   <Send className="ml-2" size={18} />
                 </Button>
               </form>
