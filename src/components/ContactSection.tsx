@@ -8,6 +8,35 @@ const ContactSection = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const formData = new FormData(e.target);
+
+      const response = await fetch("https://formsubmit.co/ajax/org.automata@gmail.com", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success === "true") {
+        setSubmitted(true);
+      } else {
+        alert("Message could not be sent. Try again.");
+      }
+    } catch (error) {
+      alert("Network error. Please try again.");
+    }
+
+    setLoading(false);
+  };
+
   return (
     <section id="contact" className="section-padding bg-background">
       <div className="section-container">
@@ -86,23 +115,7 @@ const ContactSection = () => {
                 </p>
               </div>
             ) : (
-              <form
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  setLoading(true);
-
-                  const formData = new FormData(e.target);
-
-                  await fetch("https://formsubmit.co/ajax/org.automata@gmail.com", {
-                    method: "POST",
-                    body: formData,
-                  });
-
-                  setLoading(false);
-                  setSubmitted(true);
-                }}
-                className="space-y-5"
-              >
+              <form onSubmit={handleSubmit} className="space-y-5">
                 {/* FormSubmit config */}
                 <input type="hidden" name="_captcha" value="false" />
                 <input type="hidden" name="_template" value="table" />
