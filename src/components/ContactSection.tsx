@@ -5,6 +5,39 @@ import { useState } from "react";
 
 const ContactSection = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const form = e.target;
+
+    const data = {
+      name: form.name.value,
+      email: form.email.value,
+      message: form.message.value,
+    };
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        setSubmitted(true);
+        form.reset();
+      } else {
+        alert("Failed to send message. Please try again.");
+      }
+    } catch (err) {
+      alert("Network error. Try again.");
+    }
+
+    setLoading(false);
+  };
 
   return (
     <section id="contact" className="section-padding bg-background">
@@ -82,17 +115,7 @@ const ContactSection = () => {
                 </p>
               </div>
             ) : (
-              <form
-                action="https://formsubmit.co/org.automata@gmail.com"
-                method="POST"
-                onSubmit={() => setSubmitted(true)}
-                className="space-y-5"
-              >
-                <input type="hidden" name="_captcha" value="false" />
-                <input type="hidden" name="_template" value="table" />
-                <input type="hidden" name="_subject" value="New Lead from Automata Website" />
-                <input type="hidden" name="_next" value="https://automata-rose.vercel.app/#contact" />
-
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Your Name
@@ -116,9 +139,10 @@ const ContactSection = () => {
 
                 <button
                   type="submit"
+                  disabled={loading}
                   className="w-full bg-primary text-white py-3 rounded-xl flex items-center justify-center gap-2"
                 >
-                  Send Message
+                  {loading ? "Sending..." : "Send Message"}
                   <Send size={18} />
                 </button>
               </form>
